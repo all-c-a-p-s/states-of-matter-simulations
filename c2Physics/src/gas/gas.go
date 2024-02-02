@@ -86,14 +86,30 @@ func updateParticles(particles []Particle) []Particle {
 
 				newParticles[i].velocity.y = newParticles[j].velocity.y
 				newParticles[j].velocity.y = tempY
+
+				distanceX := newParticles[j].coords.x - newParticles[i].coords.x
+				distanceY := newParticles[j].coords.y - newParticles[i].coords.y
+
+				max_attempts := 100
+				attempts := 0
+
+				for colliding(newParticles[i], newParticles[j], 20.0) { // update position until no longer collliding
+					attempts++
+					newParticles[j].coords.x += distanceX / 10
+					newParticles[j].coords.y += distanceY / 10
+					if attempts > max_attempts {
+						break
+					}
+				}
 			}
+
 		}
 	}
 	return newParticles
 }
 
 func main() {
-	iterations := 500
+	iterations := 10_000
 
 	var images []*image.Paletted
 	var delays []int
@@ -110,13 +126,13 @@ func main() {
 		color.RGBA{0x33, 0x33, 0x33, 255},
 	}
 
-	particles := genParticles(20, 500.0)
+	particles := genParticles(20, 600.0)
 	for i := 0; i < iterations; i++ {
-		dc := gg.NewContext(1000.0, 1000.0)
+		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
 		dc.Clear()
 		for _, c := range particles {
-			dc.DrawCircle(c.coords.x, c.coords.y, 20.0)
+			dc.DrawCircle(c.coords.x/4.0, c.coords.y/4.0, 5.0)
 		}
 
 		dc.SetRGBA(0, 0, 0, 1)
@@ -127,12 +143,12 @@ func main() {
 		dst := image.NewPaletted(bounds, palette)
 		draw.Draw(dst, bounds, img, bounds.Min, draw.Src)
 		images = append(images, dst)
-		delays = append(delays, 2)
+		delays = append(delays, 1)
 		disposals = append(disposals, gif.DisposalBackground)
 
 		particles = updateParticles(particles)
 	}
-	file, err := os.OpenFile("gas.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("../images/gas.gif", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic("error creating file")
 	}

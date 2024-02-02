@@ -60,7 +60,7 @@ func UpdateCentres(centres []Coordinate, temp float64) []Coordinate {
 }
 
 func main() {
-	iterations := 100
+	iterations := 10_000
 	centres := startCentres()
 
 	var images []*image.Paletted
@@ -79,11 +79,11 @@ func main() {
 	}
 
 	for i := 0; i < iterations; i++ {
-		dc := gg.NewContext(1000.0, 1000.0)
+		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
 		dc.Clear()
 		for _, c := range centres {
-			dc.DrawCircle(c.x, c.y, 20.0)
+			dc.DrawCircle(c.x/4.0, c.y/4.0, 5.0)
 		}
 
 		dc.SetRGBA(0, 0, 0, 1)
@@ -94,13 +94,13 @@ func main() {
 		dst := image.NewPaletted(bounds, palette)
 		draw.Draw(dst, bounds, img, bounds.Min, draw.Src)
 		images = append(images, dst)
-		delays = append(delays, 10)
+		delays = append(delays, 1)
 		disposals = append(disposals, gif.DisposalBackground)
 
 		centres = UpdateCentres(centres, 1000.0)
 	}
 
-	file, err := os.OpenFile("solid.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("../images/solid.gif", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic("error creating file")
 	}

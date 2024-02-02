@@ -145,7 +145,7 @@ func updateParticles(particles []Particle) []Particle {
 }
 
 func main() {
-	iterations := 1000
+	iterations := 10_000
 
 	var images []*image.Paletted
 	var delays []int
@@ -162,13 +162,13 @@ func main() {
 		color.RGBA{0x33, 0x33, 0x33, 255},
 	}
 
-	particles := genParticles(400, 500.0)
+	particles := genParticles(400, 1000.0)
 	for i := 0; i < iterations; i++ {
-		dc := gg.NewContext(1000.0, 1000.0)
+		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
 		dc.Clear()
 		for _, c := range particles {
-			dc.DrawCircle(c.coords.x, c.coords.y, 20.0)
+			dc.DrawCircle(c.coords.x/4.0, c.coords.y/4.0, 5.0)
 		}
 
 		dc.SetRGBA(0, 0, 0, 1)
@@ -179,12 +179,12 @@ func main() {
 		dst := image.NewPaletted(bounds, palette)
 		draw.Draw(dst, bounds, img, bounds.Min, draw.Src)
 		images = append(images, dst)
-		delays = append(delays, 2)
+		delays = append(delays, 1)
 		disposals = append(disposals, gif.DisposalBackground)
 
 		particles = updateParticles(particles)
 	}
-	file, err := os.OpenFile("liquid.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("../images/liquid.gif", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic("error creating file")
 	}
