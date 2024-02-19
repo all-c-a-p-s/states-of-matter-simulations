@@ -1,7 +1,5 @@
 window.onscroll = function() { scrollResponse() };
 
-
-
 function scrollResponse() {
   var navbar = document.getElementById("navbar")
   if (navbar === null) {

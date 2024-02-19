@@ -148,7 +148,7 @@ func main() {
 
 		particles = updateParticles(particles)
 	}
-	file, err := os.OpenFile("../images/gas.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("../../images/gas.gif", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic("error creating file")
 	}

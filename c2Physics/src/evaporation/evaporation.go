@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -13,8 +14,11 @@ import (
 )
 
 const (
-	GRAVITY                    float64 = 1
+	GRAVITY                    float64 = 10
 	COEFFICIENT_OF_RESTITUTION float64 = 0.5
+	P_ESCAPE                   float64 = 0.01
+	MAX_K                      float64 = 2.0
+	MAX_SPEED                  float64 = 10.0
 )
 
 type Coordinate struct {
@@ -32,15 +36,17 @@ type Particle struct {
 	velocity Velocity
 }
 
+func calculateSpeed(p Particle) float64 {
+	return math.Sqrt(p.velocity.x*p.velocity.x + p.velocity.y*p.velocity.y)
+}
+
 func genParticles(n int, temp float64) []Particle {
 	// where n is number of particles to generate
 	k := temp / 10
 	particles := []Particle{}
+	centres := startCentres()
 	for i := 0; i < n; i++ {
-		// TODO: check that particles are not generated in the same position
-		cX := rand.Float64() * 1000.0
-		cY := rand.Float64() * 1000.0
-		c := Coordinate{cX, cY}
+		c := centres[i]
 		vX := rand.Float64()*k - k/2
 		vY := rand.Float64()*k - k/2
 		v := Velocity{vX, vY}
@@ -48,6 +54,20 @@ func genParticles(n int, temp float64) []Particle {
 		particles = append(particles, newParticle)
 	}
 	return particles
+}
+
+func startCentres() []Coordinate {
+	var centres []Coordinate
+	for i := 20; i <= 970; i += 50 {
+		for j := 960; j >= 660; j -= 50 {
+			c := Coordinate{
+				x: float64(i),
+				y: float64(j),
+			}
+			centres = append(centres, c)
+		}
+	}
+	return centres
 }
 
 func distance(p1, p2 Particle) float64 {
@@ -60,9 +80,23 @@ func colliding(p1, p2 Particle, radius float64) bool {
 	return distance(p1, p2) < radius*2
 }
 
-func updateParticles(particles []Particle) []Particle {
+func updateParticles(particles []Particle, genNumber int) []Particle {
+	var speedK float64 = float64((200 + genNumber)) / 200
+	speedK = min(speedK, MAX_K)
+	gravityK := GRAVITY * float64(500/(genNumber+500))
+	// gravityK = max(1/MAX_K, gravityK)
 	newParticles := particles
 	for i := range newParticles {
+
+		reset := newParticles[i]
+
+		newParticles[i].velocity.x *= float64(speedK)
+		newParticles[i].velocity.y *= float64(speedK)
+
+		if calculateSpeed(newParticles[i]) > MAX_SPEED {
+			newParticles[i] = reset
+		}
+
 		k1 := 1
 		k2 := 1
 
@@ -82,6 +116,10 @@ func updateParticles(particles []Particle) []Particle {
 		newParticles[i].velocity.y += float64(r2) * float64(k2) * 2
 
 		// random small velocity to mitigate strange behaviour on the side
+
+		if newParticles[i].coords.y >= 900 {
+			newParticles[i].velocity.y -= 1
+		}
 
 		if newParticles[i].coords.y-20.0+newParticles[i].velocity.y < 0 {
 			newParticles[i].coords.y = 20
@@ -135,7 +173,7 @@ func updateParticles(particles []Particle) []Particle {
 		}
 	}
 	for i := range newParticles {
-		newParticles[i].velocity.y += GRAVITY
+		newParticles[i].velocity.y += gravityK
 	}
 	for i := range newParticles {
 		newParticles[i].coords.x += newParticles[i].velocity.x
@@ -145,7 +183,7 @@ func updateParticles(particles []Particle) []Particle {
 }
 
 func main() {
-	iterations := 10_000
+	iterations := 1000
 
 	var images []*image.Paletted
 	var delays []int
@@ -162,8 +200,11 @@ func main() {
 		color.RGBA{0x33, 0x33, 0x33, 255},
 	}
 
-	particles := genParticles(400, 1000.0)
+	particles := genParticles(133, 100.0)
 	for i := 0; i < iterations; i++ {
+		if i%50 == 0 {
+			fmt.Println(i)
+		}
 		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
 		dc.Clear()
@@ -182,9 +223,9 @@ func main() {
 		delays = append(delays, 1)
 		disposals = append(disposals, gif.DisposalBackground)
 
-		particles = updateParticles(particles)
+		particles = updateParticles(particles, i)
 	}
-	file, err := os.OpenFile("../../images/liquid.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("../../images/evaporation.gif", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic("error creating file")
 	}

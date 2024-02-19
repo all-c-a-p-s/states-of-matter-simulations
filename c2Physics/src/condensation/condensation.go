@@ -15,6 +15,9 @@ import (
 const (
 	GRAVITY                    float64 = 1
 	COEFFICIENT_OF_RESTITUTION float64 = 0.5
+	P_ESCAPE                   float64 = 0.01
+	MAX_K                      float64 = 2.0
+	MAX_SPEED                  float64 = 10.0
 )
 
 type Coordinate struct {
@@ -60,9 +63,28 @@ func colliding(p1, p2 Particle, radius float64) bool {
 	return distance(p1, p2) < radius*2
 }
 
-func updateParticles(particles []Particle) []Particle {
+func updateParticles(particles []Particle, genNum int) []Particle {
+	gravityK := (100.0 + float64(genNum)) / 100.0
+	speedK := 200.0 / (200.0 + float64(genNum))
 	newParticles := particles
 	for i := range newParticles {
+
+		if newParticles[i].coords.y-20.0+newParticles[i].velocity.y < 0 {
+			newParticles[i].coords.y = 20
+			newParticles[i].velocity.y *= -1
+		} else if newParticles[i].coords.y+20.0+newParticles[i].velocity.y > 1000 {
+			newParticles[i].coords.y = 980
+			newParticles[i].velocity.y *= -1
+		} else if newParticles[i].coords.x-20.0+newParticles[i].velocity.x < 0 {
+			newParticles[i].coords.x = 20
+			newParticles[i].velocity.x *= -1
+		} else if newParticles[i].coords.x+20.0+newParticles[i].velocity.x > 1000 {
+			newParticles[i].coords.x = 980
+			newParticles[i].velocity.x *= -1
+		}
+		newParticles[i].coords.x += newParticles[i].velocity.x
+		newParticles[i].coords.y += newParticles[i].velocity.y
+
 		k1 := 1
 		k2 := 1
 
@@ -77,25 +99,14 @@ func updateParticles(particles []Particle) []Particle {
 		}
 
 		r1 := rand.Float32()
-		newParticles[i].velocity.x += float64(r1) * float64(k1) * 2
+		newParticles[i].velocity.x += float64(r1) * float64(k1) * 2 * speedK
 		r2 := rand.Float32()
-		newParticles[i].velocity.y += float64(r2) * float64(k2) * 2
+		newParticles[i].velocity.y += float64(r2) * float64(k2) * 2 * speedK
 
 		// random small velocity to mitigate strange behaviour on the side
 
-		if newParticles[i].coords.y-20.0+newParticles[i].velocity.y < 0 {
-			newParticles[i].coords.y = 20
-			newParticles[i].velocity.y *= -COEFFICIENT_OF_RESTITUTION
-		} else if newParticles[i].coords.y+20.0+newParticles[i].velocity.y > 1000 {
-			newParticles[i].coords.y = 980
-			newParticles[i].velocity.y *= -COEFFICIENT_OF_RESTITUTION
-		} else if newParticles[i].coords.x-20.0+newParticles[i].velocity.x < 0 {
-			newParticles[i].coords.x = 20
-			newParticles[i].velocity.x *= -COEFFICIENT_OF_RESTITUTION
-		} else if newParticles[i].coords.x+20.0+newParticles[i].velocity.x > 1000 {
-			newParticles[i].coords.x = 980
-			newParticles[i].velocity.x *= -COEFFICIENT_OF_RESTITUTION
-		}
+		newParticles[i].velocity.y *= speedK
+		newParticles[i].velocity.x *= speedK
 
 		for j := range newParticles {
 			if j == i {
@@ -105,11 +116,11 @@ func updateParticles(particles []Particle) []Particle {
 				tempX := newParticles[i].velocity.x
 				tempY := newParticles[i].velocity.y
 
-				newParticles[i].velocity.x = newParticles[j].velocity.x * COEFFICIENT_OF_RESTITUTION
-				newParticles[j].velocity.x = tempX * COEFFICIENT_OF_RESTITUTION
+				newParticles[i].velocity.x = newParticles[j].velocity.x
+				newParticles[j].velocity.x = tempX
 
-				newParticles[i].velocity.y = newParticles[j].velocity.y * COEFFICIENT_OF_RESTITUTION
-				newParticles[j].velocity.y = tempY * COEFFICIENT_OF_RESTITUTION
+				newParticles[i].velocity.y = newParticles[j].velocity.y
+				newParticles[j].velocity.y = tempY
 
 				distanceX := newParticles[j].coords.x - newParticles[i].coords.x
 				distanceY := newParticles[j].coords.y - newParticles[i].coords.y
@@ -126,6 +137,7 @@ func updateParticles(particles []Particle) []Particle {
 					}
 				}
 			}
+
 		}
 
 		if newParticles[i].coords.y >= 960 { // close to the bottom
@@ -134,18 +146,20 @@ func updateParticles(particles []Particle) []Particle {
 			newParticles[i].velocity.x *= 0.1
 		}
 	}
+
 	for i := range newParticles {
-		newParticles[i].velocity.y += GRAVITY
-	}
-	for i := range newParticles {
-		newParticles[i].coords.x += newParticles[i].velocity.x
-		newParticles[i].coords.y += newParticles[i].velocity.y
+		newParticles[i].velocity.y += gravityK
+
+		if genNum == 250 { // slow down particles later into simulation
+			newParticles[i].velocity.y *= speedK
+			newParticles[i].velocity.x *= speedK
+		}
 	}
 	return newParticles
 }
 
 func main() {
-	iterations := 10_000
+	iterations := 1000
 
 	var images []*image.Paletted
 	var delays []int
@@ -162,7 +176,7 @@ func main() {
 		color.RGBA{0x33, 0x33, 0x33, 255},
 	}
 
-	particles := genParticles(400, 1000.0)
+	particles := genParticles(150, 200.0)
 	for i := 0; i < iterations; i++ {
 		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
@@ -182,9 +196,9 @@ func main() {
 		delays = append(delays, 1)
 		disposals = append(disposals, gif.DisposalBackground)
 
-		particles = updateParticles(particles)
+		particles = updateParticles(particles, i)
 	}
-	file, err := os.OpenFile("../../images/liquid.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("../../images/condensation.gif", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic("error creating file")
 	}
