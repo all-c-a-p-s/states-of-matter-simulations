@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -81,22 +80,31 @@ func colliding(p1, p2 Particle, radius float64) bool {
 }
 
 func updateParticles(particles []Particle, genNumber int) []Particle {
-	var speedK float64 = float64((200 + genNumber)) / 200
+	var speedK float64 = float64((500 + genNumber)) / 500
 	speedK = min(speedK, MAX_K)
 	gravityK := GRAVITY * float64(500/(genNumber+500))
 	// gravityK = max(1/MAX_K, gravityK)
 	newParticles := particles
 	for i := range newParticles {
 
-		reset := newParticles[i]
+		if genNumber < 50 {
+			escape_p := rand.Float64()
+			if escape_p > (1 - P_ESCAPE) {
+				newParticles[i].velocity.x *= 2 // escape from cluster of particles
+				newParticles[i].velocity.y *= 2 // if the particle is not on the top layer its speed propagates upwards by collisions
+			}
+		} else if genNumber > 200 {
 
-		newParticles[i].velocity.x *= float64(speedK)
-		newParticles[i].velocity.y *= float64(speedK)
+			reset := newParticles[i]
 
-		if calculateSpeed(newParticles[i]) > MAX_SPEED {
-			newParticles[i] = reset
+			newParticles[i].velocity.x *= float64(speedK)
+			newParticles[i].velocity.y *= float64(speedK)
+
+			if calculateSpeed(newParticles[i]) > MAX_SPEED {
+				newParticles[i] = reset
+			}
+
 		}
-
 		k1 := 1
 		k2 := 1
 
@@ -202,9 +210,6 @@ func main() {
 
 	particles := genParticles(133, 100.0)
 	for i := 0; i < iterations; i++ {
-		if i%50 == 0 {
-			fmt.Println(i)
-		}
 		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
 		dc.Clear()

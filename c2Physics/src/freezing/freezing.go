@@ -36,29 +36,18 @@ func genParticles(n int, temp float64) []Particle {
 	// where n is number of particles to generate
 	k := temp / 10
 	particles := []Particle{}
-	centres := startCentres()
 	for i := 0; i < n; i++ {
+		// TODO: check that particles are not generated in the same position
+		cX := rand.Float64() * 1000.0
+		cY := rand.Float64() * 1000.0
+		c := Coordinate{cX, cY}
 		vX := rand.Float64()*k - k/2
 		vY := rand.Float64()*k - k/2
 		v := Velocity{vX, vY}
-		newParticle := Particle{centres[i], v}
+		newParticle := Particle{c, v}
 		particles = append(particles, newParticle)
 	}
 	return particles
-}
-
-func startCentres() []Coordinate {
-	var centres []Coordinate
-	for i := 20; i <= 818; i += 42 {
-		for j := 960; j >= 708; j -= 42 {
-			c := Coordinate{
-				x: float64(i),
-				y: float64(j),
-			}
-			centres = append(centres, c)
-		}
-	}
-	return centres
 }
 
 func distance(p1, p2 Particle) float64 {
@@ -173,7 +162,7 @@ func main() {
 		color.RGBA{0x33, 0x33, 0x33, 255},
 	}
 
-	particles := genParticles(133, 500.0)
+	particles := genParticles(400, 1000.0)
 	for i := 0; i < iterations; i++ {
 		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
@@ -189,11 +178,10 @@ func main() {
 		bounds := img.Bounds()
 		dst := image.NewPaletted(bounds, palette)
 		draw.Draw(dst, bounds, img, bounds.Min, draw.Src)
-		if i > 50 {
-			images = append(images, dst)
-			delays = append(delays, 1)
-			disposals = append(disposals, gif.DisposalBackground)
-		}
+		images = append(images, dst)
+		delays = append(delays, 1)
+		disposals = append(disposals, gif.DisposalBackground)
+
 		particles = updateParticles(particles)
 	}
 	file, err := os.OpenFile("../../images/liquid.gif", os.O_WRONLY|os.O_CREATE, 0600)
