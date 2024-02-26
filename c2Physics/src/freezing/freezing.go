@@ -153,7 +153,7 @@ func updateParticles(particles []Particle) []Particle {
 		newParticles[i].velocity.y += GRAVITY
 		newParticles[i].velocity.x *= 0.5
 		newParticles[i].velocity.y *= 0.5
-		if (genNum % 5) == 0 {
+		if (genNum%5) == 0 && genNum > 100 {
 			newParticles[i].velocity.x *= 0.1
 			newParticles[i].velocity.y *= 0.1
 		}
@@ -183,7 +183,7 @@ func main() {
 		color.RGBA{0x33, 0x33, 0x33, 255},
 	}
 
-	particles := genParticles(133, 100.0)
+	particles := genParticles(133, 1000.0)
 	for i := 0; i < iterations; i++ {
 		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
