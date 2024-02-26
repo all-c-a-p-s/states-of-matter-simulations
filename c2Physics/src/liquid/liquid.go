@@ -156,7 +156,7 @@ func updateParticles(particles []Particle) []Particle {
 }
 
 func main() {
-	iterations := 10_000
+	iterations := 1000
 
 	var images []*image.Paletted
 	var delays []int

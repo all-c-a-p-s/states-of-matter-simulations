@@ -40,7 +40,6 @@ func genParticles(n int, temp float64) []Particle {
 	k := temp / 10
 	particles := []Particle{}
 	for i := 0; i < n; i++ {
-		// TODO: check that particles are not generated in the same position
 		cX := rand.Float64() * 1000.0
 		cY := rand.Float64() * 1000.0
 		c := Coordinate{cX, cY}

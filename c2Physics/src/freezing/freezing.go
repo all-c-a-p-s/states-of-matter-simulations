@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	GRAVITY                    float64 = 1
+	GRAVITY                    float64 = 0.5
 	COEFFICIENT_OF_RESTITUTION float64 = 0.5
 )
 
@@ -32,15 +32,29 @@ type Particle struct {
 	velocity Velocity
 }
 
+var genNum int = 0
+
+func startCentres() []Coordinate {
+	var centres []Coordinate
+	for i := 20; i <= 970; i += 50 {
+		for j := 960; j >= 660; j -= 50 {
+			c := Coordinate{
+				x: float64(i),
+				y: float64(j),
+			}
+			centres = append(centres, c)
+		}
+	}
+	return centres
+}
+
 func genParticles(n int, temp float64) []Particle {
 	// where n is number of particles to generate
 	k := temp / 10
 	particles := []Particle{}
+	centres := startCentres()
 	for i := 0; i < n; i++ {
-		// TODO: check that particles are not generated in the same position
-		cX := rand.Float64() * 1000.0
-		cY := rand.Float64() * 1000.0
-		c := Coordinate{cX, cY}
+		c := centres[i]
 		vX := rand.Float64()*k - k/2
 		vY := rand.Float64()*k - k/2
 		v := Velocity{vX, vY}
@@ -61,6 +75,7 @@ func colliding(p1, p2 Particle, radius float64) bool {
 }
 
 func updateParticles(particles []Particle) []Particle {
+	genNum++
 	newParticles := particles
 	for i := range newParticles {
 		k1 := 1
@@ -136,6 +151,12 @@ func updateParticles(particles []Particle) []Particle {
 	}
 	for i := range newParticles {
 		newParticles[i].velocity.y += GRAVITY
+		newParticles[i].velocity.x *= 0.5
+		newParticles[i].velocity.y *= 0.5
+		if (genNum % 5) == 0 {
+			newParticles[i].velocity.x *= 0.1
+			newParticles[i].velocity.y *= 0.1
+		}
 	}
 	for i := range newParticles {
 		newParticles[i].coords.x += newParticles[i].velocity.x
@@ -145,7 +166,7 @@ func updateParticles(particles []Particle) []Particle {
 }
 
 func main() {
-	iterations := 10_000
+	iterations := 1000
 
 	var images []*image.Paletted
 	var delays []int
@@ -162,7 +183,7 @@ func main() {
 		color.RGBA{0x33, 0x33, 0x33, 255},
 	}
 
-	particles := genParticles(400, 1000.0)
+	particles := genParticles(133, 100.0)
 	for i := 0; i < iterations; i++ {
 		dc := gg.NewContext(250.0, 250.0)
 		dc.SetRGBA(1, 1, 1, 0)
@@ -178,13 +199,14 @@ func main() {
 		bounds := img.Bounds()
 		dst := image.NewPaletted(bounds, palette)
 		draw.Draw(dst, bounds, img, bounds.Min, draw.Src)
-		images = append(images, dst)
-		delays = append(delays, 1)
-		disposals = append(disposals, gif.DisposalBackground)
-
+		if i > 500 {
+			images = append(images, dst)
+			delays = append(delays, 1)
+			disposals = append(disposals, gif.DisposalBackground)
+		}
 		particles = updateParticles(particles)
 	}
-	file, err := os.OpenFile("../../images/liquid.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("../../images/freezing.gif", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic("error creating file")
 	}
