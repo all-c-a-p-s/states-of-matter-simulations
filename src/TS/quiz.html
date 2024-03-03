@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <script src="quiz.ts" type="text/typescript"></script>
+    <title>Multiple Choice Quiz</title>
+
+    <style>
+      .button {
+        background-color: #581ebd;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="navbar">
+      <a class="active" href="index.html">Home</a>
+      <a href="solid.html">Solid</a>
+      <a href="liquid.html">Liquid</a>
+      <a href="gas.html">Gas</a>
+      <a href="freezing.html">Freezing</a>
+      <a href="melting.html">Melting</a>
+      <a href="condensation.html">Condensation</a>
+      <a href="evaporation.html">Evaporation</a>
+      <a href="quiz.html">Quiz</a>
+    </div>
+
+    <h1>Multiple Choice Quiz</h1>
+    <div id="quiz">
+      <div>
+        <h2>Question 1</h2>
+        <p>In a solid:</p>
+        <label>
+          <input
+            type="radio"
+            name="q1"
+            value="The solid vibrates about a fixed position"
+          />
+          The solid vibrates about a fixed position </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q1"
+            value="Particles are free to move within the solid"
+          />
+          Particles are free to move within the solid </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q1"
+            value="Particles vibrate about fixed positions in a lattice"
+          />
+          Particles vibrate about fixed positions in a lattice </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q1"
+            value="Solids cannot be made from the first 20 elements"
+          />
+          Solids cannot be made from the first 20 elements </label
+        ><br />
+      </div>
+      <div>
+        <h2>Question 2</h2>
+        <p>
+          The process of changing state directly from a solid to a gas is
+          called:
+        </p>
+        <label>
+          <input type="radio" name="q2" value="Gasification" />
+          Gasification </label
+        ><br />
+        <label>
+          <input type="radio" name="q2" value="Sublimation" />
+          Sublimation </label
+        ><br />
+        <label>
+          <input type="radio" name="q2" value="Anti-condensing" />
+          Anti-condensing </label
+        ><br />
+        <label>
+          <input type="radio" name="q2" value="Dry ice" />
+          Dry ice</label
+        ><br />
+      </div>
+      <div>
+        <h2>Question 3</h2>
+        <p>Evaporation occurs because:</p>
+        <label>
+          <input
+            type="radio"
+            name="q3"
+            value="Some particles have higher energy than the average"
+          />
+          Some particles have higher energy than the average </label
+        ><br />
+        <label>
+          <input type="radio" name="q3" value="Water is a dipole" />
+          Water is a dipole </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q3"
+            value="The pressure of the liquid is too low"
+          />
+          The pressure of the liquid is too low </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q3"
+            value="The average temperature of the liquid is above the boiling point"
+          />
+          The average temperature of the liquid is above the boiling point </label
+        ><br />
+      </div>
+      <div>
+        <h2>Question 4</h2>
+        <p>Gases:</p>
+        <label>
+          <input type="radio" name="q4" value="Are colourless" />
+          Are colourless </label
+        ><br />
+        <label>
+          <input type="radio" name="q4" value="Are odourless" />
+          Are odourless </label
+        ><br />
+        <label>
+          <input type="radio" name="q4" value="Are compressible" />
+          Are compressible </label
+        ><br />
+        <label>
+          <input type="radio" name="q4" value="Are denser than liquids" />
+          Are denser than liquids </label
+        ><br />
+      </div>
+      <div>
+        <h2>Question 5</h2>
+        <p>In a liquid:</p>
+        <label>
+          <input
+            type="radio"
+            name="q5"
+            value="Particles are free to move and far apart"
+          />
+          Particles are free to move and far apart </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q5"
+            value="All particles are bonded together"
+          />
+          All particles are bonded together </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q5"
+            value="Particles are free to move and close together"
+          />
+          Particles are free to move and close together </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q5"
+            value="No particles are bonded together"
+          />
+          No particles are bonded together </label
+        ><br />
+      </div>
+      <div>
+        <h2>Question 6</h2>
+        <p>Absolute zero is:</p>
+        <label>
+          <input type="radio" name="q6" value="-273°K" />
+          -273°K </label
+        ><br />
+        <label>
+          <input type="radio" name="q6" value="-256°C" />
+          -256°C </label
+        ><br />
+        <label>
+          <input type="radio" name="q6" value="0°F" />
+          0°F </label
+        ><br />
+        <label>
+          <input type="radio" name="q6" value="0°K" />
+          0°K </label
+        ><br />
+      </div>
+      <div>
+        <h2>Question 7</h2>
+        <p>
+          How many of these states of matter are subject to diffusion (solid,
+          liquid, gas)
+        </p>
+        <label>
+          <input type="radio" name="q7" value="0" />
+          0 </label
+        ><br />
+        <label>
+          <input type="radio" name="q7" value="1" />
+          1 </label
+        ><br />
+        <label>
+          <input type="radio" name="q7" value="2" />
+          2 </label
+        ><br />
+        <label>
+          <input type="radio" name="q7" value="3" />
+          3 </label
+        ><br />
+      </div>
+      <div>
+        <h2>Question 8</h2>
+        <p>Temperature is defined by:</p>
+        <label>
+          <input
+            type="radio"
+            name="q8"
+            value="The average kinetic energy of the particles making up a substance"
+          />
+          The average kinetic energy of the particles making up a substance </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q8"
+            value="The total kinetic energy of a substance divided by the number of electron shells in each nuclei"
+          />
+          The total kinetic energy of a substance divided by the number of
+          electron shells in each nuclei </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q8"
+            value="The total kinetic energy of atoms in the substance"
+          />
+          The total kinetic energy of atoms in the substance </label
+        ><br />
+        <label>
+          <input
+            type="radio"
+            name="q8"
+            value="The average potential energy of the particles making up a substance"
+          />
+          The average potential energy of the particles making up a substance </label
+        ><br />
+      </div>
+    </div>
+    <button id="submit" class="button">Submit Answers</button>
+    <script>
+      var submit = document.getElementById("submit");
+      if (submit === null) {
+        throw new Error("submit is null");
+      }
+      submit.addEventListener("click", markQuiz);
+
+      function markQuiz() {
+        let answers = [];
+        let incorrect = [];
+        const questions = document.querySelectorAll("#quiz div");
+        questions.forEach(function (question) {
+          const selectedOption = question.querySelector(
+            'input[type="radio"]:checked'
+          );
+          if (selectedOption) {
+            answers.push(selectedOption.value);
+          }
+        });
+        const correctAnswers = [
+          "Particles vibrate about fixed positions in a lattice",
+          "Sublimation",
+          "Some particles have higher energy than the average",
+          "Are compressible",
+          "Particles are free to move and close together",
+          "0°K",
+          "2",
+          "The average kinetic energy of the particles making up a substance",
+        ];
+        let score = 0;
+        let questionNumber = 1;
+        answers.forEach(function (answer, index) {
+          if (answer === correctAnswers[index]) {
+            score++;
+          } else {
+            incorrect.push(questionNumber);
+          }
+          questionNumber++;
+        });
+        alert(
+          "You got " +
+            score +
+            " out of " +
+            correctAnswers.length +
+            " questions correct!"
+        );
+
+        if (incorrect.length > 0) {
+          let wrongNumbers = "";
+          for (let i = 0; i < incorrect.length; i++) {
+            wrongNumbers += " " + incorrect[i];
+          }
+          alert("Questions wrong: \n" + wrongNumbers);
+        }
+      }
+    </script>
+    <script src="index.ts"></script>
+  </body>
+</html>
