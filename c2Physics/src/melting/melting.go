@@ -8,6 +8,7 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"slices"
 
 	"github.com/fogleman/gg"
 )
@@ -196,10 +197,14 @@ func main() {
 
 		particles = updateParticles(particles, i)
 	}
-	file, err := os.OpenFile("../../images/melting.gif", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("../../images/freezing_test.gif", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic("error creating file")
 	}
+	slices.Reverse(images)
+	slices.Reverse(disposals)
+	images = images[:900]
+	images = images[:900]
 	defer file.Close()
 	gif.EncodeAll(file, &gif.GIF{
 		Image:    images,

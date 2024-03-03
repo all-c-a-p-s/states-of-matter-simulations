@@ -60,7 +60,7 @@ func UpdateCentres(centres []Coordinate, temp float64) []Coordinate {
 }
 
 func main() {
-	iterations := 10_000
+	iterations := 1_000
 	centres := startCentres()
 
 	var images []*image.Paletted
